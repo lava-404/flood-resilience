@@ -1,0 +1,7 @@
+# Copy to terraform.tfvars (git-ignored). No secrets belong here.
+budget_email = "you@example.com"
+image_tag    = "abc1234"            # git short SHA pushed by scripts/deploy.sh
+# acm_certificate_arn      = "arn:aws:acm:ap-south-1:123456789012:certificate/..."   # preferred
+# allow_insecure_http_demo = true     # ONLY if you have no certificate; never with real SOS data
+# demo_now         = "2024-09-28T20:00:00+00:00"   # pins clocks to the SYNTHETIC replay for the demo
+# schedule_state   = "ENABLED"        # only when you are ready for scheduled runs

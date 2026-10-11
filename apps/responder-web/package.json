@@ -1,0 +1,8 @@
+{
+  "name": "responder-web",
+  "private": true,
+  "scripts": { "dev": "next dev -p 3000", "build": "next build", "start": "next start", "test": "node --experimental-strip-types --test tests/*.test.ts" },
+  "dependencies": { "next": "latest", "react": "latest", "react-dom": "latest" },
+  "devDependencies": { "typescript": "latest", "@types/react": "latest", "@types/node": "latest" },
+  "//": "UNTESTED. 'latest' is a placeholder: run `npm install` then commit the generated lockfile so Amplify builds are reproducible."
+}

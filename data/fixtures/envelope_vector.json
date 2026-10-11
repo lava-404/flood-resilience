@@ -1,0 +1,20 @@
+{
+ "TEST_ONLY_seed_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+ "now": "2024-09-28T12:30:00Z",
+ "signing_string": "FR1\n1\nvec-0001\n8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c\nSOS\n2024-09-28T12:00:00Z\n2024-09-29T12:00:00Z\n5\n261500\n859000\n3\neyJwZW9wbGVfY291bnQiOiAzLCAibWVkaWNhbCI6IHRydWUsICJub3RlIjogIuCkm+CkpCDgpKrgpLAgLyBvbiByb29mIn0=",
+ "envelope": {
+  "protocol_version": 1,
+  "message_id": "vec-0001",
+  "origin_peer_id": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+  "message_type": "SOS",
+  "created_at": "2024-09-28T12:00:00Z",
+  "expires_at": "2024-09-29T12:00:00Z",
+  "hop_count": 0,
+  "max_hops": 5,
+  "lat_e4": 261500,
+  "lon_e4": 859000,
+  "severity": 3,
+  "payload_b64": "eyJwZW9wbGVfY291bnQiOiAzLCAibWVkaWNhbCI6IHRydWUsICJub3RlIjogIuCkm+CkpCDgpKrgpLAgLyBvbiByb29mIn0=",
+  "signature": "d41b8698ad1df6c260634a1947d0d9c868f66e54df08c344c1f56e9b7eacdd93b7f0f31376243e072aff07e69053e464bd4c41bcef501f942bb1ffafb2570f0f"
+ }
+}

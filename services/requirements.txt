@@ -1,0 +1,7 @@
+# Ranges only: generate a hash-pinned lock with `pip-compile` on a networked machine before deploying.
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30,<1
+pydantic>=2.7,<3
+psycopg[binary]>=3.2,<4
+boto3>=1.34,<2
+cryptography>=43

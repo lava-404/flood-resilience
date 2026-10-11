@@ -1,0 +1,15 @@
+<!-- Merge into android/app/src/main/AndroidManifest.xml (inside <manifest>). UNTESTED. -->
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+<!-- Android 13+: Wi-Fi Direct discovery without location -->
+<uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES" android:usesPermissionFlags="neverForLocation" />
+<!-- Android 12 and below: Wi-Fi Direct discovery requires location permission -->
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="32" />
+<!-- BLE fallback (not implemented yet; permissions reserved) -->
+<uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+<uses-feature android:name="android.hardware.wifi.direct" android:required="false" />
+<!-- DEBUG ONLY (emulator talks to http://10.0.2.2): add android:usesCleartextTraffic="true" to <application> in the DEBUG manifest, never release. -->

@@ -1,0 +1,4 @@
+{"synthetic": true, "note": "FICTIONAL shelters for demo only. Not real locations or capacities.",
+ "shelters": [
+  {"id": "DEMO-SH-1", "name": "Demo Shelter A (fictional school)", "lat": 26.17, "lon": 85.93, "capacity": 300, "availability": "unknown", "provenance": "synthetic_demo"},
+  {"id": "DEMO-SH-2", "name": "Demo Shelter B (fictional community hall)", "lat": 26.12, "lon": 85.88, "capacity": 150, "availability": "unknown", "provenance": "synthetic_demo"}]}

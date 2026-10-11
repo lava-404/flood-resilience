@@ -1,0 +1,5 @@
+# Cleanup (destructive: do not run without a deliberate decision)
+1. Decide what to keep. Export data: `aws s3 sync s3://$(terraform -chdir=infra/aws output -raw data_bucket) ./backup-s3/`; snapshot the DB: `aws rds create-db-snapshot --db-instance-identifier floodres-demo --db-snapshot-identifier floodres-manual-$(date +%Y%m%d)`.
+2. Cheap pause instead of destroy: `aws ecs update-service --cluster floodres-demo --service forecast --desired-count 0` (and `api`); leave `schedule_state=DISABLED`. The ALB and RDS still bill.
+3. Full teardown: set `protect_data=false`, `terraform apply`, empty the **versioned** S3 bucket (all versions), delete ECR images, then `terraform plan -destroy` -> review -> `terraform destroy`. `force_destroy=false` is deliberate, so this fails until the bucket is empty.
+4. Secrets Manager secrets stay recoverable for 7 days. Verify nothing remains: `aws resourcegroupstaggingapi get-resources --tag-filters Key=Project,Values=floodres`, and check Billing the next day.

@@ -1,0 +1,67 @@
+# Local stack: PostGIS + LocalStack (S3/SQS) + API + worker.  UNTESTED (no Docker in the authoring environment).
+# Uses dummy local credentials only. Never reuse real AWS keys here.
+x-env: &env
+  DB_HOST: db
+  DB_NAME: floodres
+  DB_USER: floodres
+  DB_PASSWORD: localdev-only
+  DB_SSLMODE: disable
+  AWS_ACCESS_KEY_ID: test
+  AWS_SECRET_ACCESS_KEY: test
+  AWS_DEFAULT_REGION: ap-south-1
+  AWS_ENDPOINT_URL: http://localstack:4566
+  SNAPSHOT_BUCKET: floodres-local-raw
+  FORECAST_QUEUE_URL: http://localstack:4566/000000000000/floodres-forecast-jobs
+  RESPONDER_TOKEN: local-responder-token-0123456789
+  CORS_ORIGINS: http://localhost:3000
+  DEMO_NOW: "2024-09-28T20:00:00+00:00"
+  REPLAY_MODE: "1"
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment: {POSTGRES_DB: floodres, POSTGRES_USER: floodres, POSTGRES_PASSWORD: localdev-only}
+    ports: ["5432:5432"]
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U floodres"], interval: 5s, retries: 10}
+  localstack:
+    image: localstack/localstack:3
+    environment: {SERVICES: "s3,sqs"}
+    ports: ["4566:4566"]
+  localstack-init:
+    image: amazon/aws-cli:latest
+    depends_on: [localstack]
+    environment: {<<: *env}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        until aws --endpoint-url http://localstack:4566 s3 mb s3://floodres-local-raw 2>/dev/null || aws --endpoint-url http://localstack:4566 s3 ls s3://floodres-local-raw; do sleep 2; done
+        E="--endpoint-url http://localstack:4566"
+        aws $$E sqs create-queue --queue-name floodres-forecast-jobs-dlq
+        DLQ=arn:aws:sqs:ap-south-1:000000000000:floodres-forecast-jobs-dlq
+        cat > /tmp/attrs.json <<EOF
+        {"VisibilityTimeout":"10","RedrivePolicy":"{\"deadLetterTargetArn\":\"$$DLQ\",\"maxReceiveCount\":\"3\"}"}
+        EOF
+        aws $$E sqs create-queue --queue-name floodres-forecast-jobs --attributes file:///tmp/attrs.json
+  migrate:
+    build: {context: ., dockerfile: services/Dockerfile, target: migrate}
+    environment: {<<: *env}
+    depends_on: {db: {condition: service_healthy}}
+  api:
+    build: {context: ., dockerfile: services/Dockerfile, target: api}
+    environment: {<<: *env}
+    ports: ["8000:8000"]
+    depends_on: {migrate: {condition: service_completed_successfully}}
+  forecast:
+    build: {context: ., dockerfile: services/Dockerfile, target: forecast}
+    environment: {<<: *env}
+    depends_on: {migrate: {condition: service_completed_successfully}, localstack-init: {condition: service_completed_successfully}}
+  seed:              # one-shot: loads the SYNTHETIC replay through the tested ingest -> worker code path
+    build: {context: ., dockerfile: services/Dockerfile, target: api}
+    command: ["python", "-m", "ingest.seed_demo"]
+    environment: {<<: *env}
+    restart: "no"
+    depends_on: {migrate: {condition: service_completed_successfully}}
+  ingest:            # one-shot; run with: docker compose run --rm ingest
+    build: {context: ., dockerfile: services/Dockerfile, target: ingest}
+    environment: {<<: *env}
+    profiles: ["tools"]
+    depends_on: {migrate: {condition: service_completed_successfully}, localstack-init: {condition: service_completed_successfully}}
